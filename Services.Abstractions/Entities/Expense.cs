@@ -1,7 +1,7 @@
 ﻿using System;
 using Shared.Enums;
 
-namespace Services.Entities
+namespace Services.Abstractions.Entities
 {
     public class Expense
     {
@@ -17,6 +17,6 @@ namespace Services.Entities
         
         public Currency Currency { get; set; }
         
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 }

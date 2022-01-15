@@ -1,13 +1,13 @@
 ﻿using System;
 using Shared.Enums;
 
-namespace Services.Entities
+namespace Services.Abstractions.Entities
 {
     public class GetExpense
     {
-        public string User { get; set; }
+        public string User { get; set; } = string.Empty;
 
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } 
         
         public ExpenseType Type { get; set; }
         
@@ -15,6 +15,6 @@ namespace Services.Entities
         
         public Currency Currency { get; set; }
         
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 }

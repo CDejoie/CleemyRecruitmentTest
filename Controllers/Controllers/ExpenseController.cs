@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CleemyRecruitmentTest.Response;
+using System.Threading.Tasks;
+using AutoMapper;
 using CleemyRecruitmentTest.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstractions.Entities;
 using Services.Contracts;
-using Services.Entities;
 using Shared;
-using Shared.Enums;
 
 namespace CleemyRecruitmentTest.Controllers
 {
@@ -15,96 +15,52 @@ namespace CleemyRecruitmentTest.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
-        private readonly IMapper<GetExpense, GetExpenseViewModel> _getExpenseViewModelFromGetExpenseMapper;
+        private readonly IMapper _mapper;
 
         private readonly IExpenseService _expenseService;
 
-        public ExpenseController(IMapper<GetExpense, GetExpenseViewModel> getExpenseViewModelFromGetExpenseMapper,
+        public ExpenseController(IMapper mapper,
             IExpenseService expenseService)
         {
-            this._getExpenseViewModelFromGetExpenseMapper = getExpenseViewModelFromGetExpenseMapper;
+            this._mapper = mapper;
             this._expenseService = expenseService;
         }
 
         [HttpPost]
-        public ActionResult CreateExpense([FromBody] ExpenseViewModel expenseViewModel)
+        public async Task<ActionResult> CreateExpense([FromBody] ExpenseViewModel expenseViewModel)
         {
-            bool viewModelCanBeConvertIntoEntity =
-                this.TryToConvertExpenseViewModelIntoExpense(expenseViewModel, out Result<Expense> convertedResult);
-            if (!viewModelCanBeConvertIntoEntity)
-            {
-                return this.BadRequest(convertedResult.Error);
-            }
-
-            Result result = this._expenseService.CreateExpense(convertedResult.Value);
+            Expense expense = this._mapper.Map<Expense>(expenseViewModel);
+            Result result = await this._expenseService.CreateExpense(expense);
 
             if (result.Failure)
             {
-                return this.BadRequest(result.Error);
+                return this.BadRequest(string.Join(Environment.NewLine, result.Errors));
             }
 
             return this.Ok();
         }
 
         [HttpGet("user/{userId:long}")]
-        public ActionResult<IEnumerable<GetExpenseViewModel>> GetExpensesFromUserId([FromRoute] long userId,
-            [FromQuery] bool sortByAmount = false, bool sortByDate = false)
+        public async Task<ActionResult<IEnumerable<GetExpenseViewModel>>> GetExpensesFromUserId([FromRoute] long userId,
+            [FromQuery] string? sortProperty)
         {
-            if (sortByAmount && sortByDate)
+            if (sortProperty != null && typeof(GetExpenseViewModel).GetProperty(sortProperty) is null)
             {
-                return this.BadRequest("You can't filter by amount and date");
+                return this.BadRequest($"You can't filter by \"{sortProperty}\"");
             }
 
-            Result<IReadOnlyCollection<GetExpense>> expenses = this._expenseService.GetExpensesFromUserId(userId);
+            Result<IReadOnlyCollection<GetExpense>> expenses =
+                await this._expenseService.GetExpensesFromUserIdSorted(userId, sortProperty);
 
             if (expenses.Failure)
             {
-                return this.NotFound(expenses.Error);
+                return this.NotFound(string.Join(Environment.NewLine, expenses.Errors));
             }
 
             List<GetExpenseViewModel> expenseViewModels =
-                expenses.Value.Select(expense => this._getExpenseViewModelFromGetExpenseMapper.Map(expense)).ToList();
-
-            if (sortByAmount)
-            {
-                return this.Ok(expenseViewModels.OrderBy(expense => expense.Amount));
-            }
-
-            if (sortByDate)
-            {
-                return this.Ok(expenseViewModels.OrderBy(expense => expense.Date));
-            }
+                expenses.Value.Select(expense => this._mapper.Map<GetExpenseViewModel>(expense)).ToList();
 
             return this.Ok(expenseViewModels);
-        }
-
-        private bool TryToConvertExpenseViewModelIntoExpense(ExpenseViewModel expenseViewModel,
-            out Result<Expense> result)
-        {
-            bool canConvertType = Enum.TryParse(expenseViewModel.Type, out ExpenseType expenseType);
-            if (!canConvertType)
-            {
-                result = Result.Fail<Expense>(ConvertExpenseViewModelIntoExpenseResponse.WrongType);
-                return false;
-            }
-
-            bool canConvertCurrency = Enum.TryParse(expenseViewModel.Currency, out Currency expenseCurrency);
-            if (!canConvertCurrency)
-            {
-                result = Result.Fail<Expense>(ConvertExpenseViewModelIntoExpenseResponse.WrongCurrency);
-                return false;
-            }
-
-            result = Result.Ok(new Expense
-            {
-                UserId = expenseViewModel.UserId,
-                Date = expenseViewModel.Date,
-                Type = expenseType,
-                Amount = expenseViewModel.Amount,
-                Currency = expenseCurrency,
-                Comment = expenseViewModel.Comment,
-            });
-            return true;
         }
     }
 }

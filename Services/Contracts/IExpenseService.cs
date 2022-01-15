@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
-using Services.Entities;
+using System.Threading.Tasks;
+using Services.Abstractions.Entities;
 using Shared;
 
 namespace Services.Contracts
 {
     public interface IExpenseService
     {
-        Result CreateExpense(Expense expense);
+        Task<Result> CreateExpense(Expense expense);
 
-        Result<IReadOnlyCollection<GetExpense>> GetExpensesFromUserId(long userId);
+        Task<Result<IReadOnlyCollection<GetExpense>>> GetExpensesFromUserIdSorted(long userId, string? sortProperty);
     }
 }

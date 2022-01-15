@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Shared.Enums;
 
 namespace CleemyRecruitmentTest.ViewModels
 {
@@ -10,16 +11,16 @@ namespace CleemyRecruitmentTest.ViewModels
         
         public DateTime Date { get; set; }
         
-        [Required]
-        public string Type { get; set; }
+        [EnumDataType(typeof(ExpenseType))]
+        public string Type { get; set; } = string.Empty;
         
         [Range(0.01, 999999999999999.99, ErrorMessage = "Amount should exist and be upper than 0.01")]
         public decimal Amount { get; set; }
         
-        [Required]
-        public string Currency { get; set; }
+        [EnumDataType(typeof(Currency))]
+        public string Currency { get; set; } = string.Empty;
         
         [Required]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 }

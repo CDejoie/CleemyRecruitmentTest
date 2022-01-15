@@ -11,9 +11,9 @@ namespace Repositories
         {
         }
         
-        public DbSet<DbExpense> Expenses { get; set; }
-        public DbSet<DbUser> Users { get; set; }
-        
+        public DbSet<DbExpense> Expenses { get; set; } = null!;
+        public DbSet<DbUser> Users { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new DbExpenseConfiguration());
