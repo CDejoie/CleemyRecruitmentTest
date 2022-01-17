@@ -1,4 +1,5 @@
 using CleemyRecruitmentTest.DependencyInjection;
+using CleemyRecruitmentTest.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Repositories;
+using Repositories.Mappers;
 
 namespace CleemyRecruitmentTest
 {
@@ -22,8 +24,9 @@ namespace CleemyRecruitmentTest
         {
             services.AddControllers();
 
-            LayersDependencyInjection.Register(services);
-            MappersDependencyInjection.Register(services);
+            services.RegisterLayers();
+
+            services.AddAutoMapper(typeof(ControllersProfile), typeof(RepositoriesProfile));
 
             services.AddDbContext<ExpensesContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ExpensesContext")));

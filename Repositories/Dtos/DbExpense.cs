@@ -11,8 +11,8 @@ namespace Repositories.Dtos
         public ExpenseType Type { get; set; }
         public decimal Amount { get; set; }
         public Currency Currency { get; set; }
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
         
-        public DbUser User { get; set; }
+        public DbUser User { get; set; } = null!;
     }
 }
