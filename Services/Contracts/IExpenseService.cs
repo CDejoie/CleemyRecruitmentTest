@@ -9,6 +9,6 @@ namespace Services.Contracts
     {
         Task<Result> CreateExpense(Expense expense);
 
-        Task<Result<IReadOnlyCollection<GetExpense>>> GetExpensesFromUserIdSorted(long userId, string? sortProperty);
+        Task<Result<IReadOnlyCollection<GetExpense>>> GetExpensesFromUserIdSorted(long userId, string? sortProperty, bool descending);
     }
 }

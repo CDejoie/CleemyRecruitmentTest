@@ -40,7 +40,7 @@ namespace Repositories.Repositories
 
         // This method should be optimize because we use EF just for the request variable
         // I didn't succeed to find a way to integrate my dynamic sort in the query
-        public async Task<IReadOnlyCollection<Expense>> GetAllFromUserIdSorted(long userId, string? sortProperty)
+        public async Task<IReadOnlyCollection<Expense>> GetAllFromUserIdSorted(long userId, string? sortProperty, bool descending)
         {
             List<DbExpense>? request =
                 await _context.Expenses.Where(dbExpense => dbExpense.UserId == userId).ToListAsync();
@@ -49,8 +49,16 @@ namespace Repositories.Repositories
                 PropertyInfo? sortPropertyInfo = typeof(DbExpense).GetProperty(sortProperty);
                 if (sortPropertyInfo != null)
                 {
-                    return request.OrderBy(expense => sortPropertyInfo.GetValue(expense, null))
-                        .Select(ConvertFromDb).ToList().AsReadOnly();
+                    if (descending)
+                    {
+                        return request.OrderByDescending(expense => sortPropertyInfo.GetValue(expense, null))
+                            .Select(ConvertFromDb).ToList().AsReadOnly();
+                    }
+                    else
+                    {
+                        return request.OrderBy(expense => sortPropertyInfo.GetValue(expense, null))
+                            .Select(ConvertFromDb).ToList().AsReadOnly();
+                    }
                 }
             }
 

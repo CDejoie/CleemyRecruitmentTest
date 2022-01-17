@@ -60,7 +60,7 @@ namespace Services.Services
         }
 
         public async Task<Result<IReadOnlyCollection<GetExpense>>> GetExpensesFromUserIdSorted(long userId,
-            string? sortProperty)
+            string? sortProperty, bool descending)
         {
             Result<User> userResult = await this.GetUser(userId);
             if (userResult.Failure)
@@ -69,7 +69,7 @@ namespace Services.Services
             }
 
             IReadOnlyCollection<Expense> expenses = await
-                this._expenseRepository.GetAllFromUserIdSorted(userId, sortProperty);
+                this._expenseRepository.GetAllFromUserIdSorted(userId, sortProperty, descending);
 
             var getExpenses = expenses.Select(expense => GetExpenseFactory.CreateGetExpense(expense, userResult.Value))
                 .ToList().AsReadOnly();

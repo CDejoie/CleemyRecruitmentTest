@@ -42,7 +42,7 @@ namespace CleemyRecruitmentTest.Controllers
 
         [HttpGet("user/{userId:long}")]
         public async Task<ActionResult<IEnumerable<GetExpenseViewModel>>> GetExpensesFromUserId([FromRoute] long userId,
-            [FromQuery] string? sortProperty)
+            [FromQuery] string? sortProperty, bool descending = false)
         {
             if (sortProperty != null && typeof(GetExpenseViewModel).GetProperty(sortProperty) is null)
             {
@@ -50,7 +50,7 @@ namespace CleemyRecruitmentTest.Controllers
             }
 
             Result<IReadOnlyCollection<GetExpense>> expenses =
-                await this._expenseService.GetExpensesFromUserIdSorted(userId, sortProperty);
+                await this._expenseService.GetExpensesFromUserIdSorted(userId, sortProperty, descending);
 
             if (expenses.Failure)
             {
