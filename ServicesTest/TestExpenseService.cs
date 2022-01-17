@@ -44,7 +44,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenDateInTheFuture_ThenReturnFailure()
+        public async void CreateExpense_GivenDateInTheFuture_ThenReturnFailure()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
@@ -72,7 +72,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenMoreThanThreeMonthDate_ThenReturnFailure()
+        public async void CreateExpense_GivenMoreThanThreeMonthDate_ThenReturnFailure()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
@@ -100,7 +100,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenNoComment_ThenReturnFailure()
+        public async void CreateExpense_GivenNoComment_ThenReturnFailure()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
@@ -129,7 +129,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenUserIdThatDoesntExist_ThenReturnFailure()
+        public async void CreateExpense_GivenUserIdThatDoesntExist_ThenReturnFailure()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
@@ -156,7 +156,7 @@ namespace ServicesTest
         [Theory]
         [InlineData(Currency.RUB, Currency.USD)]
         [InlineData(Currency.USD, Currency.RUB)]
-        public async void TestExpenseService_GivenCurrencyThatDoesntMatchWithTheUserOne_ThenReturnFailure(
+        public async void CreateExpense_GivenCurrencyThatDoesntMatchWithTheUserOne_ThenReturnFailure(
             Currency expenseCurrency, Currency userCurrency)
         {
             // Arrange
@@ -186,7 +186,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenExpenseThatAlreadyExist_ThenReturnFailure()
+        public async void CreateExpense_GivenExpenseThatAlreadyExist_ThenReturnFailure()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
@@ -214,7 +214,7 @@ namespace ServicesTest
         }
 
         [Fact]
-        public async void TestExpenseService_GivenGoodExpense_ThenReturnSuccess()
+        public async void CreateExpense_GivenGoodExpense_ThenReturnSuccess()
         {
             // Arrange
             Expense expense = this._fixture.Build<Expense>()
